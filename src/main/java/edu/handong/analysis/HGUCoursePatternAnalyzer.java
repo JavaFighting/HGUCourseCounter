@@ -4,15 +4,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.File;
+
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
-import edu.handong.analysis.utils.NotEnoughArgumentException;
 import edu.handong.analysis.utils.Utils;
 
 public class HGUCoursePatternAnalyzer {
 
 	private HashMap<String,Student> students;
+	private String input; 
+	private String output;
+	private String analysis;
+	private String courseCode;
+	private String startYear;
+	private String endYear;
+	private boolean help;
 	
 	/**
 	 * This method runs our analysis logic to save the number courses taken by each student per semester in a result file.
@@ -21,18 +36,18 @@ public class HGUCoursePatternAnalyzer {
 	 */
 	public void run(String[] args) {
 		
-		try {
-			// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
-			if(args.length<2)
-				throw new NotEnoughArgumentException();
-		} catch (NotEnoughArgumentException e) {
-			System.out.println(e.getMessage());
-			System.exit(0);
-		}
+		Options options=createOptions();
 		
-		String dataPath = args[0]; // csv file to be analyzed
-		String resultPath = args[1]; // the file path where the results are saved.
-		ArrayList<String> lines = Utils.getLines(dataPath, true);
+		if(parseOptions(options,args)) {
+			if(help) {
+				printHelp(options);
+				return;
+			}
+		}
+		String dataPath = input;
+		String resultPath = output;
+		
+		ArrayList<CSVRecords> lines = Utils.getLines(dataPath, true);
 		
 		students = loadStudentCourseRecords(lines);
 		

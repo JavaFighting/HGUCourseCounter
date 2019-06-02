@@ -1,4 +1,5 @@
 package edu.handong.analysis.datamodel;
+import org.apache.commons.csv.CSVRecord;
 
 public class Course {
 	private String studentId;
